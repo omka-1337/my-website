@@ -412,7 +412,7 @@
 
   <section class="hero">
     <video id="bg-video" muted loop playsinline preload="auto">
-      <source src="assets/bg.mp4" type="video/mp4">
+      <source id="bg-video-source" type="video/mp4">
     </video>
     <div class="scrim"></div>
     <div class="grain"></div>
@@ -521,13 +521,29 @@
     })();
 
     /* ---------- player ---------- */
+    const VIDEO_SOURCES = [
+      'https://omka-1337-bg-videos.b-cdn.net/Video1.mp4',
+      'https://omka-1337-bg-videos.b-cdn.net/Video2.mp4',
+      'https://omka-1337-bg-videos.b-cdn.net/Video3.mp4'
+    ];
+
     const video = document.getElementById('bg-video');
+    const videoSource = document.getElementById('bg-video-source');
     const entry = document.getElementById('entry');
     const entryBtn = document.getElementById('entry-btn');
     const cue = document.getElementById('scroll-cue');
     const avatar = document.getElementById('avatar-img');
 
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Випадково обираємо одне відео зі списку VIDEO_SOURCES при кожному завантаженні сторінки
+    if (VIDEO_SOURCES.length) {
+      const chosen = VIDEO_SOURCES[Math.floor(Math.random() * VIDEO_SOURCES.length)];
+      videoSource.src = chosen;
+      video.load();
+    } else {
+      document.body.classList.add('no-video');
+    }
 
     video.addEventListener('error', () => document.body.classList.add('no-video'), true);
     setTimeout(() => {
