@@ -402,7 +402,7 @@
 <body>
 
   <div id="entry">
-    <button id="entry-btn" aria-label="Почати" data-i18n="entry.start" data-i18n-attr="aria-label">
+    <button id="entry-btn" aria-label="Start" data-i18n="entry.start" data-i18n-attr="aria-label">
       <svg viewBox="0 0 24 24">
         <path d="M8 5v14l11-7z" />
       </svg>
@@ -419,7 +419,7 @@
 
     <div class="hero-content">
       <div class="avatar-wrap">
-        <img class="avatar" id="avatar-img" src="assets/avatar.jpg" alt="Фото профілю" data-i18n="hero.avatarAlt"
+        <img class="avatar" id="avatar-img" src="assets/avatar.png" alt="Фото профілю" data-i18n="hero.avatarAlt"
           data-i18n-attr="alt">
       </div>
       <h1 class="name">OMKA</h1>
@@ -472,7 +472,7 @@
 
   <script>
     /* ---------- i18n ---------- */
-    const SUPPORTED_LOCALES = ['uk', 'en']; // додай сюди код нової мови, коли створиш locales/xx.json
+    const SUPPORTED_LOCALES = ['uk', 'en'];
     const DEFAULT_LOCALE = 'en';
 
     function detectLocale() {
@@ -508,7 +508,7 @@
         return { locale, dict: await res.json() };
       } catch (e) {
         if (locale !== DEFAULT_LOCALE) return loadLocale(DEFAULT_LOCALE);
-        return null; // en.json теж не знайшовся — лишаємо текст, що вже є в HTML
+        return null;
       }
     }
 
@@ -529,13 +529,11 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Фолбек, якщо файл відео відсутній / не завантажився
     video.addEventListener('error', () => document.body.classList.add('no-video'), true);
     setTimeout(() => {
       if (video.readyState === 0) document.body.classList.add('no-video');
     }, 1500);
 
-    // Фолбек для аватарки — коло з ініціалами замість зображення
     avatar.addEventListener('error', () => {
       const wrap = avatar.parentElement;
       const initials = document.createElement('div');
@@ -544,7 +542,7 @@
       wrap.replaceChild(initials, avatar);
     });
 
-    const MAX_VOLUME = 0.7;
+    const MAX_VOLUME = 0.25;
 
     function enter() {
       entry.classList.add('hidden');
