@@ -1,0 +1,24 @@
+{
+  "entry": {
+    "start": "Start",
+    "cta": "Click to enter"
+  },
+  "hero": {
+    "avatarAlt": "Profile photo"
+  },
+  "socials": {
+    "eyebrow": "Get in touch",
+    "heading": "Find me",
+    "subheading": "All my socials and contacts in one place."
+  },
+  "cv": {
+    "download": "Download"
+  },
+  "wiki": {
+    "title": "My universe wiki",
+    "description": "Lore, characters and history — all in one place"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}
