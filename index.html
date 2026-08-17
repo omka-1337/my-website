@@ -656,8 +656,7 @@
 
   <footer>
     <p>© <span id="year"></span> Omka. <span data-i18n="footer.rights">All rights reserved.</span></p>
-    <!-- Заміни href на посилання на репозиторій з кодом цього сайту -->
-    <a class="footer-github" href="https://github.com/omka-1337/your-site-repo" target="_blank" rel="noopener"
+    <a class="footer-github" href="https://github.com/omka-1337/my-website" target="_blank" rel="noopener"
       aria-label="Source code on GitHub">
       <svg viewBox="0 0 24 24">
         <path
@@ -724,7 +723,6 @@
       'https://omka-1337-bg-videos.b-cdn.net/Video4.mp4'
     ];
 
-    // Список цитат для бабла біля аватарки. Додай/онови рядки під себе.
     const QUOTES = [
       'Believe in a dream, as in beauty, believe someday',
       'I use Arch btw',
@@ -740,7 +738,6 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Випадкова цитата в бабл біля аватарки — нова при кожному кліку
     const quoteBubble = document.getElementById('quote-bubble');
     const quoteText = document.getElementById('quote-text');
     let lastQuoteIndex = -1;
@@ -775,7 +772,7 @@
       const wrap = avatar.parentElement;
       const initials = document.createElement('div');
       initials.className = 'avatar-fallback';
-      initials.textContent = 'ТІ'; // заміни на свої ініціали
+      initials.textContent = 'O';
       wrap.replaceChild(initials, avatar);
     });
 
@@ -784,15 +781,13 @@
 
     const MAX_VOLUME = 0.25;
     const BASE_VIDEO_FILTER = 'grayscale(.25) brightness(.42) contrast(1.05)';
-    const MAX_BLUR = 14;     // px розмиття внизу скролу
-    const MIN_FREQ = 300;    // Гц — максимально «глухо», як за стіною
-    const MAX_FREQ = 20000;  // Гц — практично без фільтрації, нагорі сторінки
+    const MAX_BLUR = 14;
+    const MIN_FREQ = 300;
+    const MAX_FREQ = 20000;
 
     let audioCtx = null;
     let muffleFilter = null;
 
-    // Web Audio graph для ефекту «глушіння» звуку. Створюється лише після
-    // жесту користувача (клік на "Натисни, щоб зайти") — так вимагають браузери.
     function setupAudioGraph() {
       try {
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -804,8 +799,6 @@
         source.connect(muffleFilter);
         muffleFilter.connect(audioCtx.destination);
       } catch (e) {
-        // Якщо Web Audio недоступний або відео крос-доменне без CORS — просто
-        // лишаємось без ефекту глушіння, звук і так буде чутний як завжди.
         audioCtx = null;
         muffleFilter = null;
       }
@@ -846,7 +839,6 @@
         // Розмиття фону
         video.style.filter = `${BASE_VIDEO_FILTER} blur(${(progress * MAX_BLUR).toFixed(1)}px)`;
 
-        // Глушіння звуку (гучність лишається незмінною — міняється лише «тембр»)
         if (muffleFilter && audioCtx) {
           const targetFreq = MAX_FREQ * Math.pow(MIN_FREQ / MAX_FREQ, progress);
           muffleFilter.frequency.setTargetAtTime(targetFreq, audioCtx.currentTime, 0.15);
