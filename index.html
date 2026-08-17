@@ -121,15 +121,22 @@
       font-weight: 500;
     }
 
+    /* ---------- fixed background ---------- */
+    .bg-fixed {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
     /* ---------- hero ---------- */
     .hero {
       position: relative;
+      z-index: 1;
       height: 100vh;
       height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
     #bg-video {
@@ -145,7 +152,7 @@
       display: none;
     }
 
-    .no-video .hero {
+    .no-video .bg-fixed {
       background:
         radial-gradient(circle at 50% 15%, rgba(255, 255, 255, .05), transparent 45%),
         radial-gradient(circle at 20% 90%, rgba(255, 255, 255, .03), transparent 50%),
@@ -187,12 +194,60 @@
     }
 
     .avatar-wrap {
+      position: relative;
       width: 64px;
       height: 64px;
       border-radius: 50%;
       border: 1px solid var(--line);
       padding: 3px;
       margin-bottom: 26px;
+    }
+
+    .quote-bubble {
+      position: absolute;
+      bottom: calc(100% + 16px);
+      left: 50%;
+      max-width: 260px;
+      width: max-content;
+      padding: 10px 14px;
+      background: rgba(10, 10, 12, .85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: var(--fg);
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, 6px);
+      transition: opacity .35s var(--ease), transform .35s var(--ease);
+    }
+
+    .quote-bubble.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .quote-bubble::before,
+    .quote-bubble::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+    }
+
+    .quote-bubble::before {
+      top: 100%;
+      border-top-color: var(--line);
+    }
+
+    .quote-bubble::after {
+      top: calc(100% - 1px);
+      border-width: 6px;
+      border-top-color: #0a0a0c;
     }
 
     .avatar {
@@ -202,6 +257,12 @@
       object-fit: cover;
       display: block;
       background: #0a0a0a;
+      cursor: pointer;
+      transition: transform .2s var(--ease);
+    }
+
+    .avatar:active {
+      transform: scale(.94);
     }
 
     .avatar-fallback {
@@ -284,6 +345,7 @@
     /* ---------- socials section ---------- */
     .socials {
       position: relative;
+      z-index: 1;
       background: #000;
       padding: 130px 24px 110px;
     }
@@ -464,6 +526,9 @@
     }
 
     footer {
+      position: relative;
+      z-index: 1;
+      background: #000;
       text-align: center;
       padding: 50px 24px 60px;
       font-size: 12px;
@@ -496,6 +561,14 @@
 
 <body>
 
+  <div class="bg-fixed">
+    <video id="bg-video" muted loop playsinline preload="auto" crossorigin="anonymous">
+      <source id="bg-video-source" type="video/mp4">
+    </video>
+    <div class="scrim"></div>
+    <div class="grain"></div>
+  </div>
+
   <div id="entry">
     <button id="entry-btn" aria-label="Start" data-i18n="entry.start" data-i18n-attr="aria-label">
       <svg viewBox="0 0 24 24">
@@ -506,16 +579,11 @@
   </div>
 
   <section class="hero">
-    <video id="bg-video" muted loop playsinline preload="auto">
-      <source id="bg-video-source" type="video/mp4">
-    </video>
-    <div class="scrim"></div>
-    <div class="grain"></div>
-
     <div class="hero-content">
       <div class="avatar-wrap">
         <img class="avatar" id="avatar-img" src="assets/avatar.png" alt="Фото профілю" data-i18n="hero.avatarAlt"
           data-i18n-attr="alt">
+        <div class="quote-bubble" id="quote-bubble"><span id="quote-text"></span></div>
       </div>
       <h1 class="name">OMKA</h1>
       <p class="bio">Coder</p>
@@ -652,7 +720,15 @@
     const VIDEO_SOURCES = [
       'https://omka-1337-bg-videos.b-cdn.net/Video1.mp4',
       'https://omka-1337-bg-videos.b-cdn.net/Video2.mp4',
-      'https://omka-1337-bg-videos.b-cdn.net/Video3.mp4'
+      'https://omka-1337-bg-videos.b-cdn.net/Video3.mp4',
+      'https://omka-1337-bg-videos.b-cdn.net/Video4.mp4'
+    ];
+
+    // Список цитат для бабла біля аватарки. Додай/онови рядки під себе.
+    const QUOTES = [
+      'Believe in a dream, as in beauty, believe someday',
+      'I use Arch btw',
+      'Love Is One, and Frdora 42'
     ];
 
     const video = document.getElementById('bg-video');
@@ -663,6 +739,24 @@
     const avatar = document.getElementById('avatar-img');
 
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Випадкова цитата в бабл біля аватарки — нова при кожному кліку
+    const quoteBubble = document.getElementById('quote-bubble');
+    const quoteText = document.getElementById('quote-text');
+    let lastQuoteIndex = -1;
+
+    function showRandomQuote() {
+      if (!QUOTES.length) return;
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * QUOTES.length);
+      } while (QUOTES.length > 1 && idx === lastQuoteIndex);
+      lastQuoteIndex = idx;
+      quoteText.textContent = QUOTES[idx];
+      quoteBubble.classList.add('visible');
+    }
+
+    avatar.addEventListener('click', showRandomQuote);
 
     if (VIDEO_SOURCES.length) {
       const chosen = VIDEO_SOURCES[Math.floor(Math.random() * VIDEO_SOURCES.length)];
@@ -689,6 +783,33 @@
     botAvatar.addEventListener('error', () => { botAvatar.style.display = 'none'; });
 
     const MAX_VOLUME = 0.25;
+    const BASE_VIDEO_FILTER = 'grayscale(.25) brightness(.42) contrast(1.05)';
+    const MAX_BLUR = 14;     // px розмиття внизу скролу
+    const MIN_FREQ = 300;    // Гц — максимально «глухо», як за стіною
+    const MAX_FREQ = 20000;  // Гц — практично без фільтрації, нагорі сторінки
+
+    let audioCtx = null;
+    let muffleFilter = null;
+
+    // Web Audio graph для ефекту «глушіння» звуку. Створюється лише після
+    // жесту користувача (клік на "Натисни, щоб зайти") — так вимагають браузери.
+    function setupAudioGraph() {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        const source = audioCtx.createMediaElementSource(video);
+        muffleFilter = audioCtx.createBiquadFilter();
+        muffleFilter.type = 'lowpass';
+        muffleFilter.frequency.value = MAX_FREQ;
+        source.connect(muffleFilter);
+        muffleFilter.connect(audioCtx.destination);
+      } catch (e) {
+        // Якщо Web Audio недоступний або відео крос-доменне без CORS — просто
+        // лишаємось без ефекту глушіння, звук і так буде чутний як завжди.
+        audioCtx = null;
+        muffleFilter = null;
+      }
+    }
 
     function enter() {
       entry.classList.add('hidden');
@@ -698,6 +819,8 @@
       video.volume = 0;
       video.currentTime = 0;
       video.play().catch(() => { });
+
+      setupAudioGraph();
 
       let v = 0;
       const fadeIn = setInterval(() => {
@@ -720,7 +843,14 @@
         const heroHeight = window.innerHeight;
         const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
 
-        video.volume = MAX_VOLUME * (1 - progress);
+        // Розмиття фону
+        video.style.filter = `${BASE_VIDEO_FILTER} blur(${(progress * MAX_BLUR).toFixed(1)}px)`;
+
+        // Глушіння звуку (гучність лишається незмінною — міняється лише «тембр»)
+        if (muffleFilter && audioCtx) {
+          const targetFreq = MAX_FREQ * Math.pow(MIN_FREQ / MAX_FREQ, progress);
+          muffleFilter.frequency.setTargetAtTime(targetFreq, audioCtx.currentTime, 0.15);
+        }
 
         cue.classList.toggle('faded', progress > 0.15);
 
